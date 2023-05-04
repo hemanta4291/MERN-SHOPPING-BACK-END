@@ -9,7 +9,7 @@ const router = express.Router()
 router.post('/create',InputFeildValidation(validationSchema.item),authMiddleWare,createItem)
 router.get('/single-all',authMiddleWare,allItemByLoginUser)
 router.get('/all',allItem)
-router.put('/update/:id',authMiddleWare,updateItem)
+router.put('/update/:id',InputFeildValidation(validationSchema.item),authMiddleWare,updateItem)
 router.delete('/delete/:id',authMiddleWare,deleteItem)
 
 

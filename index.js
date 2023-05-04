@@ -7,9 +7,11 @@ const cors = require('cors')
 const app = express();
 const authRouter = require('./routes/authRouter')
 const itemRouter = require('./routes/itemRouter')
-const PORT = process.env.PORT || 4000
 
 dotenv.config()
+const PORT = process.env.PORT || 4000
+
+
 app.use(cookieParser())
 app.use(cors())
 app.use(bodyParser.json())

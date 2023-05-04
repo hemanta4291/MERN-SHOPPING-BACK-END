@@ -3,7 +3,6 @@ const {generateToken} = require('../config/jsonWebToken')
 const User = require('../model/userModal')
 const asyncHandler = require('express-async-handler')
 const bcrypt = require('bcrypt')
-const validateMongoDbId = require('../utils/validateMongoDbId')
 const { generateRefreshToken } = require('../config/refreshToken')
 
 
