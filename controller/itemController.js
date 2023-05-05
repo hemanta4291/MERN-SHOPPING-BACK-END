@@ -26,18 +26,33 @@ const createItem =  asyncHandler(async (req,res)=>{
 const allItemByLoginUser =  asyncHandler(async (req,res)=>{
     
     try {
+        const {search} = req.query
         const {_id} = req.user
-        const getItems = await Item.find({createdBy:_id})
-        res.status(200).json({
-            message:'Item got successfully',
-            data:getItems,
-            status:'Ok',
-            total:getItems.length
-        })
+        
+        const getItems = await Item.find({"createdBy":_id})
+        const searchProduct = await Item.find({"createdBy":_id,"name":{$regex: ".*" + search + ".*",$options: 'i'  }})
+        
+        if(search || searchProduct.length > 0){
+            res.status(200).json({
+                message:'Item got successfully',
+                data:searchProduct,
+                status:'Ok',
+                total:searchProduct.length
+            })
+        }else{
+            res.status(200).json({
+                message:'Item got successfully',
+                data:getItems,
+                status:'Ok',
+                total:getItems.length
+            })
+        }
+
+        
         
     } catch (error) {
         res.status(401).json({
-            message:"Not Authrized",
+            message:"Not Authrized fff",
             status:'Unauthorized'
         })
     }
@@ -45,13 +60,28 @@ const allItemByLoginUser =  asyncHandler(async (req,res)=>{
 
 const allItem =  asyncHandler(async (req,res)=>{
     try {
+        // console.log(req)
+        const {search} = req.query
         const getitems = await Item.find()
-        res.status(200).json({
-            message:'Item got successfully',
-            data:getitems,
-            status:'Ok',
-            total:getitems.length
-        })
+        const searchProduct = await Item.find({"name":{$regex: ".*" + search + ".*",$options: 'i'  }})
+        
+        if(search && searchProduct.length>0){
+            res.status(200).json({
+                message:'Item got successfully',
+                data:searchProduct,
+                status:'Ok',
+                total:searchProduct.length
+            })
+        }else{
+            res.status(200).json({
+                message:'Item got successfully',
+                data:getitems,
+                status:'Ok',
+                total:getitems.length
+            })
+        }
+
+        
     } catch (error) {
         res.status(401).json({
             message:"Not Authrized",
