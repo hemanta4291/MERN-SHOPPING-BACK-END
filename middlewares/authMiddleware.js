@@ -50,8 +50,12 @@ const isAdmin =  asyncHandler(async (req,res,next)=>{
     if(adminUser.role === 'admin'){
         next()
     }else{
-        // throw new Error("you are not admin")
-        next.error('you are not admin')
+        // // throw new Error("you are not admin")
+        // next.error('you are not admin')
+        res.status(401).json({
+            message:"you are not admin",
+            status:'Unauthorized'
+        })
     }
 })
 

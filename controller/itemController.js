@@ -1,6 +1,7 @@
 const Item = require('../model/itemModel')
 const asyncHandler = require('express-async-handler')
 const validateMongoDbId = require('../utils/validateMongoDbId')
+const {data} =require('../utils/data')
 
 const createItem =  asyncHandler(async (req,res)=>{
     try {
@@ -59,13 +60,14 @@ const allItemByLoginUser =  asyncHandler(async (req,res)=>{
 })
 
 const allItem =  asyncHandler(async (req,res)=>{
+
     try {
-        // console.log(req)
+
         const {search} = req.query
         const getitems = await Item.find()
         const searchProduct = await Item.find({"name":{$regex: ".*" + search + ".*",$options: 'i'  }})
         
-        if(search && searchProduct.length>0){
+        if(search || searchProduct.length>0){
             res.status(200).json({
                 message:'Item got successfully',
                 data:searchProduct,
@@ -88,6 +90,45 @@ const allItem =  asyncHandler(async (req,res)=>{
             status:'Unauthorized'
         })
     }
+})
+
+const getAllFetchItemByPagi =  asyncHandler(async (req,res)=>{
+
+    const page = parseInt(req.query.page)
+    const limit = parseInt(req.query.limit)
+    const search = req.query.search
+    console.log(search)
+
+    const startIndex = (page - 1) * limit 
+    const endIndex = page  * limit 
+
+    const results = {}
+
+    let totalPage = await Item.countDocuments().exec()
+    results.total = totalPage
+
+    if(endIndex < totalPage ){ 
+        results.next = {
+            page:page + 1,
+            limit:limit
+        }
+    }
+
+
+    if(startIndex > 0){
+        results.prev = {
+            page:page - 1,
+            limit:limit
+        }
+    }
+
+    
+
+    //  results.results = data.slice(startIndex,endIndex) for local
+    results.results = await Item.find({"name":{$regex: ".*" + search + ".*",$options: 'i'  }}).limit(limit).skip(startIndex).exec()
+
+    res.status(200).json(results)
+
 })
 
 
@@ -163,10 +204,8 @@ const deleteItem =  asyncHandler(async (req,res)=>{
             message:"This id is not valid or has not been found!",
             status:'Not Found'
         })
-    }
-    
-
+    } 
 })
 
 
-module.exports = {createItem,allItem,updateItem,deleteItem,allItemByLoginUser}
+module.exports = {createItem,allItem,updateItem,deleteItem,allItemByLoginUser,getAllFetchItemByPagi}
